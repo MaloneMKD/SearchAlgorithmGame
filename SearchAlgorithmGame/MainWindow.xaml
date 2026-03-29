@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="SearchAlgorithmGame.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SearchAlgorithmGame"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    mc:Ignorable="d"
+    Title="SearchAlgorithmGame">
+
+    <!--Main Grid-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <!--Settings and buttons section-->
+        <Border Grid.Row="0" Background="#121212" Padding="10, 10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+            
+                <!--Algorithm Settings-->
+                <StackPanel Spacing="35" Orientation="Horizontal">
+                    
+                    <!--Algorithm Combo Box-->
+                    <ComboBox x:Name="AlgorithmComboBox" Header="Algorithm" FontSize="12" MinWidth="150"/>
+
+                    <!--Edit Mode Toggle-->
+                    <ToggleSwitch x:Name="EditModeSwitch" Header="Edit Mode" FontSize="12" MinWidth="150"/>
+                    
+                    <!--Edit Action-->
+                    <ComboBox x:Name="EditActionComboBox" Header="Edit Action" FontSize="12" MinWidth="150" IsEnabled="{x:Bind EditModeSwitch.IsOn, Mode=OneWay}" />
+                </StackPanel>
+                
+                <!--Play/Replay Buttons-->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="15">
+                    <Button x:Name="SearchButton" Content="Search" FontSize="12" MinWidth="100"/>
+                    <Button x:Name="ReplayButton" Content="Replay" FontSize="12" MinWidth="100"/>
+                </StackPanel>
+                
+                <!--Grid Settings-->
+                <StackPanel Grid.Column="2" Spacing="35" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!--Clear Canvas Button-->
+                    <Button x:Name="ResetCanvasButton" Content="Reset Canvas" FontSize="12" MinWidth="100"
+                            Click="ResetCanvasButton_Click"/>
+
+                    <!--Box Size-->
+                    <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="50" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="2" LargeChange="10"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--Canvas-->
+        <Grid Grid.Row="1">
+            <canvas:CanvasControl Name="MainCanvas" Background="Transparent" Draw="MainCanvas_Draw" CreateResources="MainCanvas_CreateResources"
+                                  Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged" Tapped="MainCanvas_Tapped" PointerPressed="MainCanvas_PointerPressed"/>
+        </Grid>
+    </Grid>
+</Window>

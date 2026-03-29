@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="SearchAlgorithmGame/SearchAlgorithmGame.vcxproj" Id="876cb0b7-6297-477d-9795-9b7dbb245d5c">
+    <Deploy />
+  </Project>
+</Solution>
