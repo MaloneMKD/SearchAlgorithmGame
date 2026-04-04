@@ -30,19 +30,31 @@
                 <StackPanel Spacing="35" Orientation="Horizontal">
                     
                     <!--Algorithm Combo Box-->
-                    <ComboBox x:Name="AlgorithmComboBox" Header="Algorithm" FontSize="12" MinWidth="150"/>
+                    <ComboBox x:Name="AlgorithmComboBox" Header="Algorithm" FontSize="12" MinWidth="150" SelectedIndex="0">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="Breadth-First" FontSize="12"/>
+                            <ComboBoxItem Content="Depth-First" FontSize="12"/>
+                            <ComboBoxItem Content="Uniform-Cost" FontSize="12"/>
+                            <ComboBoxItem Content="Greedy-Best-First" FontSize="12"/>
+                            <ComboBoxItem Content="A*" FontSize="12"/>
+                        </ComboBox.Items>
+                    </ComboBox>
 
-                    <!--Edit Mode Toggle-->
-                    <ToggleSwitch x:Name="EditModeSwitch" Header="Edit Mode" FontSize="12" MinWidth="150"/>
-                    
                     <!--Edit Action-->
-                    <ComboBox x:Name="EditActionComboBox" Header="Edit Action" FontSize="12" MinWidth="150" IsEnabled="{x:Bind EditModeSwitch.IsOn, Mode=OneWay}" />
+                    <ComboBox x:Name="EditActionComboBox" Header="Edit Action" FontSize="12" MinWidth="150" SelectedIndex="0" >
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="Set Wall" FontSize="12"/>
+                            <ComboBoxItem Content="Set Start" FontSize="12"/>
+                            <ComboBoxItem Content="Set Goal" FontSize="12"/>
+                            <ComboBoxItem Content="Erase" FontSize="12"/>
+                        </ComboBox.Items>
+                    </ComboBox>
                 </StackPanel>
                 
                 <!--Play/Replay Buttons-->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="15">
-                    <Button x:Name="SearchButton" Content="Search" FontSize="12" MinWidth="100"/>
-                    <Button x:Name="ReplayButton" Content="Replay" FontSize="12" MinWidth="100"/>
+                    <Button x:Name="SearchButton" Content="Search" FontSize="12" MinWidth="100" Click="SearchButton_Click"/>
+                    <Button x:Name="ReplayButton" Content="Replay" FontSize="12" MinWidth="100" Click="ReplayButton_Click"/>
                 </StackPanel>
                 
                 <!--Grid Settings-->
@@ -52,7 +64,7 @@
                             Click="ResetCanvasButton_Click"/>
 
                     <!--Box Size-->
-                    <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="50" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="2" LargeChange="10"/>
+                    <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="35" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="2" LargeChange="10"/>
                 </StackPanel>
             </Grid>
         </Border>

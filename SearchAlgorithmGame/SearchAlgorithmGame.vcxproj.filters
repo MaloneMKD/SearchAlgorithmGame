@@ -15,11 +15,17 @@
     <ClCompile Include="GridItem.cpp">
       <Filter>Models</Filter>
     </ClCompile>
+    <ClCompile Include="SearchAlgorithm.cpp">
+      <Filter>Algorithms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="GridItem.h">
       <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchAlgorithm.h">
+      <Filter>Algorithms</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +57,9 @@
     </Filter>
     <Filter Include="Models">
       <UniqueIdentifier>{0318e4ff-658d-4933-9638-9960c320a0d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Algorithms">
+      <UniqueIdentifier>{1b0ed15e-6b89-44fe-8531-2938edd24f3d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

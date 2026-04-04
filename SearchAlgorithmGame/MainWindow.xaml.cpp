@@ -9,11 +9,13 @@
 #include <winrt/Microsoft.Graphics.Canvas.h>
 #include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
 #include <winrt/Microsoft.UI.Input.h>
+#include <winrt/Microsoft.UI.Composition.h>
 
 #include <PPl.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -60,16 +62,16 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::MainCanvas_Draw(win
 void winrt::SearchAlgorithmGame::implementation::MainWindow::MainCanvas_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	// Calculate aspect ratio based grid item size based on the canvas size and a desired number of rows and columns
-    InitializeGrid_FromGridItemSize(50, 50);
+    InitializeGrid_FromGridItemSize(35, 35);
 }
 
-winrt::Windows::Foundation::Point winrt::SearchAlgorithmGame::implementation::MainWindow::GetGridSize()
+Point_Int winrt::SearchAlgorithmGame::implementation::MainWindow::GetGridSize()
 {
     auto width = MainCanvas().ActualWidth();
     auto height = MainCanvas().ActualHeight();
-    UINT rows = width / GridItem::m_width;
-    UINT columns = height / GridItem::m_height;
-    return { (float)rows, (float)columns };
+    int rows = width / GridItem::m_width;
+    int columns = height / GridItem::m_height;
+    return { rows, columns };
 }
 
 void winrt::SearchAlgorithmGame::implementation::MainWindow::MainCanvas_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
@@ -112,11 +114,12 @@ winrt::fire_and_forget  winrt::SearchAlgorithmGame::implementation::MainWindow::
 winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::MainCanvas_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
 {
     auto pos = e.GetCurrentPoint(MainCanvas()).Position();
+    auto isLeftClick = e.GetCurrentPoint(MainCanvas()).Properties().IsLeftButtonPressed();
 	m_suppressTap = true;
-    co_await GridItemClicked(pos);
+    co_await GridItemClicked(pos, isLeftClick);
 }
 
-winrt::Windows::Foundation::Size winrt::SearchAlgorithmGame::implementation::MainWindow::GetGridItemSize(UINT rows, UINT columns)
+winrt::Windows::Foundation::Size winrt::SearchAlgorithmGame::implementation::MainWindow::GetGridItemSize(int rows, int columns)
 {
     auto canvasWidth = MainCanvas().ActualWidth();
     auto canvasHeight = MainCanvas().ActualHeight();
@@ -125,7 +128,7 @@ winrt::Windows::Foundation::Size winrt::SearchAlgorithmGame::implementation::Mai
     return { width, height };
 }
 
-void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_FromDimesions(UINT rows, UINT columns)
+void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_FromDimesions(int rows, int columns)
 {
 	// Set the grid item size based on the canvas size and the number of rows and columns
 	auto size = GetGridItemSize(rows, columns);
@@ -137,14 +140,14 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_From
 
 	// Initialize the grid with default GridItems based on the number of rows and columns
     m_grid.reserve(rows);
-    for(UINT i = 0; i < rows; ++i)
+    for(int i = 0; i < rows; ++i)
     {
         std::vector<GridItem> row;
         row.reserve(columns);
-        for (UINT j = 0; j < columns; ++j)
+        for (int j = 0; j < columns; ++j)
         {
-            float x = i * GridItem::m_width;
-            float y = j * GridItem::m_height;
+            int x = i * GridItem::m_width;
+            int y = j * GridItem::m_height;
             auto item = GridItem();
             item.position = { x, y };
             row.emplace_back(item);
@@ -153,7 +156,7 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_From
     };
 }
 
-void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_FromGridItemSize(UINT gridItemWidth, UINT gridItemHeight)
+void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_FromGridItemSize(int gridItemWidth, int gridItemHeight)
 {
 
 	// Set the grid item size based on the provided dimensions
@@ -162,8 +165,8 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_From
 
 	// Get the grid size based on the canvas size and the grid item size
     auto gridSize = GetGridSize();
-    UINT rows = gridSize.X;
-	UINT columns = gridSize.Y;
+    int rows = gridSize.X;
+    int columns = gridSize.Y;
 
     m_nRows = rows;
     m_nCols = columns;
@@ -171,14 +174,14 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_From
 	// Initialize the grid with default GridItems based on the number of rows and columns
     m_grid.clear();
     m_grid.reserve(rows);
-    for (UINT i = 0; i < rows; ++i)
+    for (int i = 0; i < rows; ++i)
     {
         std::vector<GridItem> row;
         row.reserve(columns);
-        for (UINT j = 0; j < columns; ++j)
+        for (int j = 0; j < columns; ++j)
         {
-            float x = i * GridItem::m_width;
-            float y = j * GridItem::m_height;
+            int x = i * GridItem::m_width;
+            int y = j * GridItem::m_height;
             auto item = GridItem();
             item.position = { x, y };
             row.emplace_back(item);
@@ -187,17 +190,20 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::InitializeGrid_From
     };
 }
 
-winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementation::MainWindow::GridItemClicked(winrt::Windows::Foundation::Point pos)
+winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementation::MainWindow::GridItemClicked(winrt::Windows::Foundation::Point pos, bool isLeftClick)
 {
+    if(m_animationRunning)
+		co_return;
+
     apartment_context ui_thread;
-    std::pair<UINT, UINT> gridPos = { 0, 0 };
+    std::pair<int, int> gridPos = { 0, 0 };
 	bool itemFound = false;
     co_await resume_background();
 
     // ========== BACKGROUND THREAD ==========
     concurrency::cancellation_token_source cts;
     concurrency::run_with_cancellation_token([&]() {
-        concurrency::parallel_for(size_t(0), size_t(m_nRows), [&](UINT i) {
+        concurrency::parallel_for(size_t(0), size_t(m_nRows), [&](int i) {
             // Check if cancelled before doing work for this iteration
             if (concurrency::is_current_task_group_canceling())
                 return;
@@ -221,13 +227,131 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
         co_return;
 
     // ========== UI THREAD ==========
-    m_grid[gridPos.first][gridPos.second].m_fillColor = winrt::Microsoft::UI::Colors::DarkGray();
+	hstring selectedAction = EditActionComboBox().SelectedItem().as<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem>().Content().as<winrt::hstring>();
+	auto& gridItem = m_grid[gridPos.first][gridPos.second];
+
+    if (selectedAction == L"Set Wall" && !gridItem.isStart && !gridItem.isGoal && isLeftClick)
+    {
+        gridItem.m_fillColor = winrt::Microsoft::UI::Colors::DarkGray();
+		gridItem.isWall = true;
+        m_wallIndices.push_back({ gridPos.first, gridPos.second });
+    }
+    else if (selectedAction == L"Set Start" && !gridItem.isWall && !gridItem.isGoal && isLeftClick)
+    {
+        // Clear any existing start
+        for (auto& item : m_grid)
+        {
+            for (auto& gridItem : item)
+            {
+                if (gridItem.isStart)
+                {
+                    gridItem.m_fillColor = winrt::Microsoft::UI::Colors::White();
+                    gridItem.isStart = false;
+                }
+            }
+        }
+
+		// Set as start
+        gridItem.m_fillColor = winrt::Microsoft::UI::Colors::Green();
+		gridItem.isStart = true;
+		m_startIndex = { gridPos.first, gridPos.second };
+    }
+    else if (selectedAction == L"Set Goal" && !gridItem.isStart && !gridItem.isWall && isLeftClick)
+    {
+		// Clear any existing goal
+        for (auto& item : m_grid)
+        {
+            for (auto& gridItem : item)
+            {
+                if (gridItem.isGoal)
+                {
+                    gridItem.m_fillColor = winrt::Microsoft::UI::Colors::White();
+                    gridItem.isGoal = false;
+                }
+            }
+        }
+
+        // Set as goal
+        gridItem.m_fillColor = winrt::Microsoft::UI::Colors::Red();
+		gridItem.isGoal = true;
+		m_goalIndex = { gridPos.first, gridPos.second };
+    }
+    else if (selectedAction == L"Erase" || !isLeftClick)
+    {
+        gridItem.m_fillColor = winrt::Microsoft::UI::Colors::White();
+		gridItem.isWall = false;
+		gridItem.isStart = false;
+		gridItem.isGoal = false;
+    }
     MainCanvas().Invalidate();
 }
+
+winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementation::MainWindow::RunSolutionAnimation(const std::vector <Point_Int>& solution, winrt::Windows::UI::Color color)
+{
+	m_animationRunning = true;
+    std::vector<Point_Int> solution_copy{solution.begin(), solution.end()};
+
+    int i = 0;
+	apartment_context ui_thread;
+    auto compositor = Window::Current().Compositor();
+	for (const auto& point : solution_copy)
+    {
+        auto& gridItem = m_grid[point.X][point.Y];
+		if (gridItem.isStart || gridItem.isGoal)
+            continue;
+        gridItem.m_fillColor = color;
+        MainCanvas().Invalidate();
+        co_await 10ms;
+		co_await ui_thread;
+    }
+    m_animationRunning = false;
+}
+
 
 void winrt::SearchAlgorithmGame::implementation::MainWindow::ResetCanvasButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	UINT boxSize = (UINT)BoxSizeNumberBox().Value();
     InitializeGrid_FromGridItemSize(boxSize, boxSize);
     MainCanvas().Invalidate();
+}
+
+winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::SearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	hstring algorithm = AlgorithmComboBox().SelectedItem().as<winrt::Microsoft::UI::Xaml::Controls::ComboBoxItem>().Content().as<winrt::hstring>();
+	if (algorithm == L"A*")
+    {
+        //SearchAlgorithm::AStar(m_grid, m_startIndex, m_goalIndex);
+    }
+    else if(algorithm == L"Greedy-Best-First")
+    {
+        Greedy_Best_First_Search gbfs;
+        auto solution = gbfs.FindPath(m_grid, m_startIndex, m_goalIndex);
+        RunSolutionAnimation(solution);
+    }
+    else if(algorithm == L"Uniform-Cost")
+    {
+        Uniform_Cost_Search ucs;
+        if (ucs.FindPath(m_grid, m_startIndex, m_goalIndex))
+        {
+            co_await RunSolutionAnimation(ucs.m_explored, winrt::Microsoft::UI::Colors::Orange());
+            RunSolutionAnimation(ucs.m_solution);
+        }
+    }
+     else if(algorithm == L"Breadth-First")
+    {
+        Breadth_First_Search bfs;
+        auto solution = bfs.FindPath(m_grid, m_startIndex, m_goalIndex);
+		RunSolutionAnimation(solution);
+    }
+     else if(algorithm == L"Depth-First")
+    {
+        Depth_First_Search dfs;
+        auto solution = dfs.FindPath(m_grid, m_startIndex, m_goalIndex);
+        RunSolutionAnimation(solution);
+    }
+}
+
+void winrt::SearchAlgorithmGame::implementation::MainWindow::ReplayButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+
 }

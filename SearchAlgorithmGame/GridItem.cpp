@@ -2,13 +2,13 @@
 #include "GridItem.h"
 
 // Initialize static variables
-UINT GridItem::m_width = 10;
-UINT GridItem::m_height = 10;
+int GridItem::m_width = 10;
+int GridItem::m_height = 10;
 
-bool GridItem::HitTest(winrt::Windows::Foundation::Point p, UINT m_xOffset, UINT m_yOffset) const
+bool GridItem::HitTest(winrt::Windows::Foundation::Point p, int m_xOffset, int m_yOffset) const
 {
-	UINT xPosOffset = position.X + m_xOffset;
-	UINT yPosOffset = position.Y + m_yOffset;
+	int xPosOffset = position.X + m_xOffset;
+	int yPosOffset = position.Y + m_yOffset;
 	if ((p.X > xPosOffset && p.X < xPosOffset + m_width) && (p.Y > yPosOffset && p.Y < yPosOffset + m_height))
 		return true;
 	return false;

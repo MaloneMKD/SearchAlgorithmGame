@@ -2,13 +2,17 @@
 
 #include "MainWindow.g.h"
 #include "GridItem.h"
+#include "SearchAlgorithm.h"
 
 #include <mutex>
+#include <chrono>
 #include <vector>
 #include <winrt/base.h>
 #include <winrt/Windows.UI.Text.h>
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Microsoft.Graphics.Canvas.Text.h>
+
+using namespace std::chrono_literals;
 
 namespace winrt::SearchAlgorithmGame::implementation
 {
@@ -41,28 +45,36 @@ namespace winrt::SearchAlgorithmGame::implementation
         winrt::fire_and_forget MainCanvas_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
         winrt::fire_and_forget MainCanvas_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
-
+    private:
         // Private Functions
-        winrt::Windows::Foundation::Point GetGridSize();
-        winrt::Windows::Foundation::Size GetGridItemSize(UINT rows, UINT columns);
-		void InitializeGrid_FromDimesions(UINT rows, UINT columns);
-        void InitializeGrid_FromGridItemSize(UINT gridItemWidth, UINT gridItemHeight);
-		winrt::Windows::Foundation::IAsyncAction GridItemClicked(winrt::Windows::Foundation::Point pos);
+        Point_Int GetGridSize();
+        winrt::Windows::Foundation::Size GetGridItemSize(int rows, int columns);
+		void InitializeGrid_FromDimesions(int rows, int columns);
+        void InitializeGrid_FromGridItemSize(int gridItemWidth, int gridItemHeight);
+		winrt::Windows::Foundation::IAsyncAction GridItemClicked(winrt::Windows::Foundation::Point pos, bool isLeftClick = true);
+		winrt::Windows::Foundation::IAsyncAction RunSolutionAnimation(const std::vector<Point_Int>&solution, 
+            winrt::Windows::UI::Color color = winrt::Microsoft::UI::Colors::Blue());
 
         // Private members 
-    private:
         float m_xOffset = 0;
 		float m_yOffset = 0;
 
-		bool m_suppressTap = false;
+        Point_Int m_startIndex{ 0, 0 };
+        Point_Int m_goalIndex{ 0, 0 };
+        std::vector<Point_Int> m_wallIndices;
 
-		UINT m_nRows = 50;
-		UINT m_nCols = 50;
+		bool m_suppressTap = false;
+		bool m_animationRunning = false;
+
+        int m_nRows = 35;
+        int m_nCols = 35;
         std::vector<std::vector<GridItem>> m_grid;
         winrt::Microsoft::Graphics::Canvas::Text::CanvasTextFormat m_textFormat{ nullptr };
         std::mutex m_gridMutex; // Protects access to m_grid
     public:
         void ResetCanvasButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::fire_and_forget SearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ReplayButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 
