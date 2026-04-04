@@ -11,16 +11,33 @@ struct Point_Int
 	int X;
 	int Y;
 
+	// Equality operator for Point_Int to be used in comparisons
 	bool operator==(const Point_Int& other) const noexcept
 	{
 		return X == other.X && Y == other.Y;
 	}
 
+	// Less-than operator for Point_Int to be used in ordered containers
 	bool operator<(const Point_Int& other) const noexcept
 	{
 		return std::tie(X, Y) < std::tie(other.X, other.Y);
 	}
 };
+
+// Custom hash function for Point_Int to be used in unordered containers
+namespace std
+{
+	template<>
+	struct hash<Point_Int>
+	{
+		std::size_t operator()(const Point_Int& point) const noexcept
+		{
+			std::size_t h1 = std::hash<int>{}(point.X);
+			std::size_t h2 = std::hash<int>{}(point.Y);
+			return h1 ^ (h2 << 1); // Combine the two hashes
+		}
+	};
+}
 
 // ===============================GRID ITEM CLASS==========================================
 class GridItem

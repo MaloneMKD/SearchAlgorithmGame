@@ -181,7 +181,7 @@ bool Uniform_Cost_Search::FindPath(const std::vector<std::vector<GridItem>>& gri
 	}
 }
 
-std::vector<Point_Int> Greedy_Best_First_Search::FindPath(const std::vector<std::vector<GridItem>>& grid, const Point_Int& start, const Point_Int& goal)
+bool Greedy_Best_First_Search::FindPath(const std::vector<std::vector<GridItem>>& grid, const Point_Int& start, const Point_Int& goal)
 {
 	auto getCost = [](const Point_Int& a, const Point_Int& b)
 		{
@@ -192,23 +192,26 @@ std::vector<Point_Int> Greedy_Best_First_Search::FindPath(const std::vector<std:
 		return {};
 
 	m_frontier.push({ start, getCost(start, goal) });
+	m_frontierSet.insert(start);
 
 	while (true)
 	{
 		// The goal was not found and there are no more nodes to expand
 		if (m_frontier.empty())
-			return m_explored;
+			return false;
 
 		// Take the node with the lowest cost
 		PriorityPoint currentNode = m_frontier.top();
 		m_frontier.pop();
+		m_frontierSet.erase(currentNode.point);
 
 		// Goal found
 		if (grid[currentNode.point.X][currentNode.point.Y].isGoal)
-			return m_explored;
+			return true;
 
 		// Add to explored set
-		m_explored.push_back(currentNode.point);
+		m_explored.insert(currentNode.point);
+		m_solution.push_back(currentNode.point);
 
 		// Check neighbors
 		for (auto [dx, dy] : std::vector<std::pair<int, int>>{ {-1,0},{0,1},{1,0},{0,-1} }) // Order is: Left -> Top -> Right -> Bottom
@@ -228,8 +231,11 @@ std::vector<Point_Int> Greedy_Best_First_Search::FindPath(const std::vector<std:
 			int newCost = getCost(neighbor, goal);
 
 			// If not in explored or frontier, add to frontier
-			if (std::find(m_explored.begin(), m_explored.end(), neighbor) == m_explored.end())
+			if (m_explored.find(neighbor) == m_explored.end() && m_frontierSet.find(neighbor) == m_frontierSet.end())
+			{
 				m_frontier.push({ neighbor, newCost });
+				m_frontierSet.insert(neighbor);
+			}
 		}
 	}
 }

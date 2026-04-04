@@ -71,6 +71,8 @@ namespace winrt::SearchAlgorithmGame::implementation
         std::vector<std::vector<GridItem>> m_grid;
         winrt::Microsoft::Graphics::Canvas::Text::CanvasTextFormat m_textFormat{ nullptr };
         std::mutex m_gridMutex; // Protects access to m_grid
+
+		winrt::Windows::Foundation::Size m_canvasSize{ 0, 0 };
     public:
         void ResetCanvasButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::fire_and_forget SearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);

@@ -5,6 +5,7 @@
 #include <deque>
 #include <queue>
 #include <map>
+#include <unordered_set>
 #include "GridItem.h"
 
 /*=========================================BREADTH_FIRST=========================================*/
@@ -89,17 +90,20 @@ private:
 class Greedy_Best_First_Search
 {
 public:
-	std::vector<Point_Int> FindPath(const std::vector<std::vector<GridItem>>& grid,
+	bool FindPath(const std::vector<std::vector<GridItem>>& grid,
 		const Point_Int& start,
 		const Point_Int& goal);
 
-private:
+
 	// The set of all leaf nodes available for expansion
 	std::priority_queue<PriorityPoint> m_frontier;
 
 	// The set of all nodes that have been explored
-	std::vector<Point_Int> m_explored;
+	std::unordered_set<Point_Int> m_explored;
 
 	// The set of the path from start to goal
 	std::vector<Point_Int> m_solution;
+
+private:
+	std::unordered_set<Point_Int> m_frontierSet; // Used for checking if a point is already in the frontier
 };

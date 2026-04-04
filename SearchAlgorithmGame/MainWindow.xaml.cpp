@@ -42,8 +42,8 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::MainCanvas_Draw(win
 		return;
 
     // Calculate the x and y offsets to center the grid on the canvas
-    m_xOffset = (MainCanvas().ActualWidth() - (m_grid.size() * GridItem::m_width)) / 2;
-    m_yOffset = (MainCanvas().ActualHeight() - (m_grid.front().size() *GridItem::m_height)) / 2;
+    m_xOffset = (m_canvasSize.Width - (m_grid.size() * GridItem::m_width)) / 2;
+    m_yOffset = (m_canvasSize.Height - (m_grid.front().size() *GridItem::m_height)) / 2;
 
 	// Draw the grid items
 	for (int i = 0; i < m_grid.size(); ++i) // Rows
@@ -76,9 +76,11 @@ Point_Int winrt::SearchAlgorithmGame::implementation::MainWindow::GetGridSize()
 
 void winrt::SearchAlgorithmGame::implementation::MainWindow::MainCanvas_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
 {
+    m_canvasSize = e.NewSize();
+
     // Calculate the x and y offsets to center the grid on the canvas
-    m_xOffset = (MainCanvas().ActualWidth() - (m_nRows * GridItem::m_width)) / 2.0f;
-    m_yOffset = (MainCanvas().ActualHeight() - (m_nCols * GridItem::m_height)) / 2.0f;
+    m_xOffset = (m_canvasSize.Width - (m_nRows * GridItem::m_width)) / 2.0f;
+    m_yOffset = (m_canvasSize.Height - (m_nCols * GridItem::m_height)) / 2.0f;
 
     if (m_xOffset < 0)
         m_xOffset = 0;
@@ -293,7 +295,6 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
 
     int i = 0;
 	apartment_context ui_thread;
-    auto compositor = Window::Current().Compositor();
 	for (const auto& point : solution_copy)
     {
         auto& gridItem = m_grid[point.X][point.Y];
@@ -305,6 +306,7 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
 		co_await ui_thread;
     }
     m_animationRunning = false;
+    co_return;
 }
 
 
@@ -325,8 +327,10 @@ winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::S
     else if(algorithm == L"Greedy-Best-First")
     {
         Greedy_Best_First_Search gbfs;
-        auto solution = gbfs.FindPath(m_grid, m_startIndex, m_goalIndex);
-        RunSolutionAnimation(solution);
+        if (gbfs.FindPath(m_grid, m_startIndex, m_goalIndex))
+        {
+            RunSolutionAnimation(gbfs.m_solution);
+        }
     }
     else if(algorithm == L"Uniform-Cost")
     {
@@ -355,3 +359,4 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::ReplayButton_Click(
 {
 
 }
+
