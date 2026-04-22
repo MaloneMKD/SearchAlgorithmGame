@@ -2,8 +2,6 @@
 #include "GridItem.h"
 
 // Initialize static variables
-int GridItem::m_width = 10;
-int GridItem::m_height = 10;
 
 bool GridItem::HitTest(winrt::Windows::Foundation::Point p, int m_xOffset, int m_yOffset) const
 {

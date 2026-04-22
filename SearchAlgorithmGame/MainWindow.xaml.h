@@ -41,9 +41,14 @@ namespace winrt::SearchAlgorithmGame::implementation
         void MainCanvas_Draw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs const& args);
         void MainCanvas_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void MainCanvas_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
-        void MainCanvas_CreateResources(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesEventArgs const& args);
-        winrt::fire_and_forget MainCanvas_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
-        winrt::fire_and_forget MainCanvas_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void MainCanvas_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
+        void MainCanvas_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+
+        void ResetCanvasButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::fire_and_forget SearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ClearPathsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void StopSearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void GridTypeItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
         // Private Functions
@@ -51,13 +56,16 @@ namespace winrt::SearchAlgorithmGame::implementation
         winrt::Windows::Foundation::Size GetGridItemSize(int rows, int columns);
 		void InitializeGrid_FromDimesions(int rows, int columns);
         void InitializeGrid_FromGridItemSize(int gridItemWidth, int gridItemHeight);
-		winrt::Windows::Foundation::IAsyncAction GridItemClicked(winrt::Windows::Foundation::Point pos, bool isLeftClick = true);
+		void GridItemClicked(winrt::Windows::Foundation::Point pos, bool isLeftClick = true);
 		winrt::Windows::Foundation::IAsyncAction RunSolutionAnimation(const std::vector<Point_Int>&solution, 
             winrt::Windows::UI::Color color = winrt::Microsoft::UI::Colors::Blue());
+        winrt::Windows::Foundation::IAsyncAction ClearPath();
 
         // Private members 
         float m_xOffset = 0;
 		float m_yOffset = 0;
+
+		GridType m_gridType = GridType::Four_Connected;
 
         Point_Int m_startIndex{ 0, 0 };
         Point_Int m_goalIndex{ 0, 0 };
@@ -65,18 +73,21 @@ namespace winrt::SearchAlgorithmGame::implementation
 
 		bool m_suppressTap = false;
 		bool m_animationRunning = false;
+		bool m_stopAnimation = false;
 
-        int m_nRows = 35;
-        int m_nCols = 35;
+        int m_nRows = 1;
+        int m_nCols = 1;
+        int m_gridItemWidth = 35;
+        int m_gridItemHeight = 35;
         std::vector<std::vector<GridItem>> m_grid;
         winrt::Microsoft::Graphics::Canvas::Text::CanvasTextFormat m_textFormat{ nullptr };
         std::mutex m_gridMutex; // Protects access to m_grid
 
 		winrt::Windows::Foundation::Size m_canvasSize{ 0, 0 };
     public:
-        void ResetCanvasButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        winrt::fire_and_forget SearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ReplayButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::Windows::Foundation::IAsyncAction SaveDesignMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::Windows::Foundation::IAsyncAction LoadDesignMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ExitMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

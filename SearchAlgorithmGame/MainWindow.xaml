@@ -14,11 +14,37 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
+        <!--Menu Bar-->
+        <Border Grid.Row="0" Background="#111111" Padding="10, 5">
+            <MenuBar Background="Transparent" Foreground="White" FontSize="8" Style="{StaticResource CustomMenuBarStyle}">
+                <!--File Menu-->
+                <MenuBarItem Title="File" Style="{StaticResource CustomMenuBarItemStyle}" FontSize="12">
+                    <MenuFlyoutItem x:Name="SaveDesignMenuItem" Text="Save Design" FontSize="12" Click="SaveDesignMenuItem_Click"/>
+                    <MenuFlyoutItem x:Name="LoadDesignMenuItem" Text="Load Design" FontSize="12" Click="LoadDesignMenuItem_Click"/>
+                    <MenuFlyoutItem x:Name="ExitMenuItem" Text="Exit" FontSize="12" Click="ExitMenuItem_Click"/>
+                </MenuBarItem >
+                
+                <!--Configuration Menu-->
+                <MenuBarItem Title="Configuration" Style="{StaticResource CustomMenuBarItemStyle}" FontSize="12">
+                    <MenuFlyoutSubItem Text="Grid Type" FontSize="12">
+                        <RadioMenuFlyoutItem x:Name="FourConnectedMenuItem" Text="4-Connected" FontSize="12" IsChecked="True" GroupName="GridTypeGroup" Click="GridTypeItem_Click"/>
+                        <RadioMenuFlyoutItem x:Name="EightConnectedMenuItem" Text="8-Connected" FontSize="12" IsChecked="False" GroupName="GridTypeGroup" Click="GridTypeItem_Click"/>
+                    </MenuFlyoutSubItem>
+                </MenuBarItem >
+
+                <!--Help Menu-->
+                <MenuBarItem Title="Help" Style="{StaticResource CustomMenuBarItemStyle}" FontSize="12">
+                    <MenuFlyoutItem x:Name="AboutMenuItem" Text="About" FontSize="12"/>
+                </MenuBarItem>
+            </MenuBar>
+        </Border>
+
         <!--Settings and buttons section-->
-        <Border Grid.Row="0" Background="#121212" Padding="10, 10">
+        <Border Grid.Row="1" Background="#121212" Padding="10, 10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
@@ -27,7 +53,7 @@
                 </Grid.ColumnDefinitions>
             
                 <!--Algorithm Settings-->
-                <StackPanel Spacing="35" Orientation="Horizontal">
+                <StackPanel Spacing="20" Orientation="Horizontal">
                     
                     <!--Algorithm Combo Box-->
                     <ComboBox x:Name="AlgorithmComboBox" Header="Algorithm" FontSize="12" MinWidth="150" SelectedIndex="0">
@@ -52,16 +78,18 @@
                 </StackPanel>
                 
                 <!--Play/Replay Buttons-->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="15">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                     <Button x:Name="SearchButton" Content="Search" FontSize="12" MinWidth="100" Click="SearchButton_Click"/>
-                    <Button x:Name="ReplayButton" Content="Replay" FontSize="12" MinWidth="100" Click="ReplayButton_Click"/>
+                    <Button x:Name="StopSearchButton" Content="Stop Search" FontSize="12" MinWidth="100" Click="StopSearchButton_Click" Visibility="Collapsed"/>
                 </StackPanel>
                 
                 <!--Grid Settings-->
-                <StackPanel Grid.Column="2" Spacing="35" Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Grid.Column="2" Spacing="20" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <!--Clear Paths Button-->
+                    <Button x:Name="ClearPathsButton" Content="Clear Paths" FontSize="12" MinWidth="100" Click="ClearPathsButton_Click"/>
+
                     <!--Clear Canvas Button-->
-                    <Button x:Name="ResetCanvasButton" Content="Reset Canvas" FontSize="12" MinWidth="100"
-                            Click="ResetCanvasButton_Click"/>
+                    <Button x:Name="ResetCanvasButton" Content="Reset Canvas" FontSize="12" MinWidth="100" Click="ResetCanvasButton_Click"/>
 
                     <!--Box Size-->
                     <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="35" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="2" LargeChange="10"/>
@@ -70,9 +98,9 @@
         </Border>
 
         <!--Canvas-->
-        <Grid Grid.Row="1">
-            <canvas:CanvasControl Name="MainCanvas" Background="Transparent" Draw="MainCanvas_Draw" CreateResources="MainCanvas_CreateResources"
-                                  Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged" Tapped="MainCanvas_Tapped" PointerPressed="MainCanvas_PointerPressed"/>
+        <Grid Grid.Row="2">
+            <canvas:CanvasControl Name="MainCanvas" Background="Transparent" Draw="MainCanvas_Draw" PointerPressed="MainCanvas_PointerPressed"
+                                  Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged" Tapped="MainCanvas_Tapped"/>
         </Grid>
     </Grid>
 </Window>

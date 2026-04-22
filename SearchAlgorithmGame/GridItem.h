@@ -11,6 +11,9 @@ struct Point_Int
 	int X;
 	int Y;
 
+	Point_Int() = default;
+	Point_Int(int x, int y) : X(x), Y(y) {}
+
 	// Equality operator for Point_Int to be used in comparisons
 	bool operator==(const Point_Int& other) const noexcept
 	{
@@ -40,6 +43,12 @@ namespace std
 }
 
 // ===============================GRID ITEM CLASS==========================================
+enum GridType
+{
+	Four_Connected,
+	Eight_Connected
+};
+
 class GridItem
 {
 public:
@@ -47,11 +56,11 @@ public:
 	bool HitTest(winrt::Windows::Foundation::Point, int m_xOffset, int m_yOffset) const;
 
 	// Members
-	static int m_width;
-	static int m_height;
+	int m_width;
+	int m_height;
 
 	Point_Int position = { 0, 0 };
-	winrt::Windows::UI::Color m_fillColor{ winrt::Windows::UI::Colors::White() };
+	winrt::Windows::UI::Color m_fillColor{ winrt::Microsoft::UI::Colors::White() };
 
 	bool isWall = false;
 	bool isStart = false;
