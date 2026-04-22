@@ -11,7 +11,7 @@
     Title="SearchAlgorithmGame">
 
     <!--Main Grid-->
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -101,6 +101,14 @@
         <Grid Grid.Row="2">
             <canvas:CanvasControl Name="MainCanvas" Background="Transparent" Draw="MainCanvas_Draw" PointerPressed="MainCanvas_PointerPressed"
                                   Loaded="MainCanvas_Loaded" SizeChanged="MainCanvas_SizeChanged" Tapped="MainCanvas_Tapped"/>
+
+            <!--Loading Overlay-->
+            <Grid x:Name="LoadingWindow" Background="#AA000000" Visibility="Collapsed">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                    <ProgressRing IsActive="True" Width="60" Height="60" Foreground="White"/>
+                    <TextBlock x:Name="LoadingText"  Text="Placeholder" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

@@ -57,9 +57,9 @@ namespace winrt::SearchAlgorithmGame::implementation
 		void InitializeGrid_FromDimesions(int rows, int columns);
         void InitializeGrid_FromGridItemSize(int gridItemWidth, int gridItemHeight);
 		void GridItemClicked(winrt::Windows::Foundation::Point pos, bool isLeftClick = true);
-		winrt::Windows::Foundation::IAsyncAction RunSolutionAnimation(const std::vector<Point_Int>&solution, 
-            winrt::Windows::UI::Color color = winrt::Microsoft::UI::Colors::Blue());
+		winrt::Windows::Foundation::IAsyncAction RunSolutionAnimation(const std::vector<Point_Int>&solution, winrt::Windows::UI::Color color = winrt::Microsoft::UI::Colors::Blue());
         winrt::Windows::Foundation::IAsyncAction ClearPath();
+        void DisplayMessage(winrt::hstring title, winrt::hstring message);
 
         // Private members 
         float m_xOffset = 0;

@@ -303,6 +303,15 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
 	MainCanvas().Invalidate();
 }
 
+void winrt::SearchAlgorithmGame::implementation::MainWindow::DisplayMessage(winrt::hstring title, winrt::hstring message)
+{
+    winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+    dialog.Title(winrt::box_value(title));
+    dialog.Content(winrt::box_value(message));
+    dialog.CloseButtonText(L"OK");
+    dialog.XamlRoot(MainGrid().XamlRoot());
+    dialog.ShowAsync();
+}
 
 void winrt::SearchAlgorithmGame::implementation::MainWindow::ResetCanvasButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
@@ -385,6 +394,30 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::GridTypeItem_Click(
 
 winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementation::MainWindow::SaveDesignMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+    auto ui_thread = winrt::apartment_context();
+    // Open file explorer to select save location and file name
+    auto picker = Microsoft::Windows::Storage::Pickers::FileSavePicker(this->AppWindow().Id());
+    picker.SuggestedStartLocation(Microsoft::Windows::Storage::Pickers::PickerLocationId::Downloads);
+    picker.SuggestedFileName(L"GridDesign");
+    picker.FileTypeChoices().Insert(L"JSON File", winrt::single_threaded_vector<hstring>({ L".json" }));
+
+    // Show the picker and handle the result
+    auto result = co_await picker.PickSaveFileAsync();
+    // --------------------- BACKGROUND THREAD ---------------------
+    if (!result)
+    {
+		DisplayMessage(L"Save Cancelled", L"Failed to get save location.");
+        co_return;
+    }
+
+    co_await ui_thread;
+    // --------------------- UI THREAD ---------------------
+	LoadingWindow().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+	LoadingText().Text(L"Saving design...");
+	co_await 100ms;
+
+    // --------------------- BACKGROUND THREAD ---------------------
+
 	// Create a JSON object to represent the grid design
     winrt::Windows::Data::Json::JsonObject rootObject;
     rootObject.SetNamedValue(L"AppName", winrt::Windows::Data::Json::JsonValue::CreateStringValue(L"Search Algorithm Game"));
@@ -425,27 +458,21 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
     // Serialize to string
     hstring jsonString = rootObject.Stringify();
 
-	// Open file explorer to select save location and file name
-    auto picker = Microsoft::Windows::Storage::Pickers::FileSavePicker(this->AppWindow().Id());
-    picker.SuggestedStartLocation(Microsoft::Windows::Storage::Pickers::PickerLocationId::Downloads);
-	picker.SuggestedFileName(L"GridDesign");
-	picker.FileTypeChoices().Insert(L"JSON File", winrt::single_threaded_vector<hstring>({ L".json" }));
+	// Save the JSON string to the selected file
+    auto storageFile = winrt::Windows::Storage::StorageFile(nullptr);
+	auto file = co_await storageFile.GetFileFromPathAsync(result.Path());
+    co_await winrt::Windows::Storage::FileIO::WriteTextAsync(file, jsonString);
 
-    // Show the picker and handle the result
-    auto result = co_await picker.PickSaveFileAsync();
-    if (result)
-    {
-        auto storageFile = winrt::Windows::Storage::StorageFile(nullptr);
-		auto file = co_await storageFile.GetFileFromPathAsync(result.Path());
-        co_await winrt::Windows::Storage::FileIO::WriteTextAsync(file, jsonString);
-    }
+	co_await ui_thread;
+	// --------------------- UI THREAD ---------------------
+    LoadingWindow().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+	DisplayMessage(L"Design Saved", L"Your grid design has been saved successfully.");
 }
 
 winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementation::MainWindow::LoadDesignMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
     // Clear wall indices
 	m_wallIndices.clear();
-
 
     // Open file explorer to select save location and file name
     auto picker = Microsoft::Windows::Storage::Pickers::FileOpenPicker(this->AppWindow().Id());
@@ -456,6 +483,13 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
 	auto result = co_await picker.PickSingleFileAsync();
     if (result)
     {
+        auto ui_thread = winrt::apartment_context();
+        LoadingWindow().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+        LoadingText().Text(L"Loading design...");
+        co_await 100ms; 
+
+        // --------------------- BACKGROUND THREAD ---------------------
+
         auto storageFile = winrt::Windows::Storage::StorageFile(nullptr);
         auto const& file = co_await storageFile.GetFileFromPathAsync(result.Path());
         auto const& text = co_await winrt::Windows::Storage::FileIO::ReadTextAsync(file);
@@ -487,6 +521,9 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
 
 		winrt::Windows::Data::Json::JsonObject goalDimObject = designDataObject.GetNamedObject(L"GoalDimensions");
 		m_goalIndex = { (int)goalDimObject.GetNamedNumber(L"Row"), (int)goalDimObject.GetNamedNumber(L"Col") };
+
+        co_await ui_thread;
+		// --------------------- UI THREAD ---------------------
         
 		// Initialize the grid based on the loaded design
 		InitializeGrid_FromDimesions(m_nRows, m_nCols);
@@ -503,6 +540,8 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
         m_grid[m_startIndex.X][m_startIndex.Y].m_fillColor = winrt::Microsoft::UI::Colors::Green();
         m_grid[m_goalIndex.X][m_goalIndex.Y].isGoal = true;
         m_grid[m_goalIndex.X][m_goalIndex.Y].m_fillColor = winrt::Microsoft::UI::Colors::Red();
+
+        LoadingWindow().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 
 		// Redraw the canvas with the loaded design
 		MainCanvas().Invalidate();
