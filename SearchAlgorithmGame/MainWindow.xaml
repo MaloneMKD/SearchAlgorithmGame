@@ -34,6 +34,8 @@
                         <RadioMenuFlyoutItem x:Name="FourConnectedMenuItem" Text="4-Connected" FontSize="12" IsChecked="True" GroupName="GridTypeGroup" Click="GridTypeItem_Click"/>
                         <RadioMenuFlyoutItem x:Name="EightConnectedMenuItem" Text="8-Connected" FontSize="12" IsChecked="False" GroupName="GridTypeGroup" Click="GridTypeItem_Click"/>
                     </MenuFlyoutSubItem>
+
+                    <ToggleMenuFlyoutItem x:Name="AnimateMazeGeneration" Text="Animate Maze Generation" IsChecked="False" Click="AnimateMazeGeneration_Click"/>
                 </MenuBarItem >
 
                 <!--Help Menu-->
@@ -75,24 +77,26 @@
                             <ComboBoxItem Content="Erase" FontSize="12"/>
                         </ComboBox.Items>
                     </ComboBox>
+
+                    <Button x:Name="GenerateMazeButton" Content="Generate Maze" MinWidth="100" FontSize="12" VerticalAlignment="Bottom" Click="GenerateMazeButton_Click"/>
                 </StackPanel>
                 
                 <!--Play/Replay Buttons-->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button x:Name="SearchButton" Content="Search" FontSize="12" MinWidth="100" Click="SearchButton_Click"/>
-                    <Button x:Name="StopSearchButton" Content="Stop Search" FontSize="12" MinWidth="100" Click="StopSearchButton_Click" Visibility="Collapsed"/>
+                    <Button x:Name="SearchButton" Content="Search" FontSize="12" MinWidth="100" Click="SearchButton_Click" VerticalAlignment="Bottom"/>
+                    <Button x:Name="StopSearchButton" Content="Stop Search" FontSize="12" MinWidth="100" Click="StopSearchButton_Click" Visibility="Collapsed" VerticalAlignment="Bottom"/>
                 </StackPanel>
                 
                 <!--Grid Settings-->
                 <StackPanel Grid.Column="2" Spacing="20" Orientation="Horizontal" HorizontalAlignment="Right">
                     <!--Clear Paths Button-->
-                    <Button x:Name="ClearPathsButton" Content="Clear Paths" FontSize="12" MinWidth="100" Click="ClearPathsButton_Click"/>
+                    <Button x:Name="ClearPathsButton" Content="Clear Paths" FontSize="12" MinWidth="100" Click="ClearPathsButton_Click" VerticalAlignment="Bottom"/>
 
                     <!--Clear Canvas Button-->
-                    <Button x:Name="ResetCanvasButton" Content="Reset Canvas" FontSize="12" MinWidth="100" Click="ResetCanvasButton_Click"/>
+                    <Button x:Name="ResetCanvasButton" Content="Reset Canvas" FontSize="12" MinWidth="100" Click="ResetCanvasButton_Click" VerticalAlignment="Bottom"/>
 
                     <!--Box Size-->
-                    <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="35" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="2" LargeChange="10"/>
+                    <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="35" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="1" LargeChange="2"/>
                 </StackPanel>
             </Grid>
         </Border>

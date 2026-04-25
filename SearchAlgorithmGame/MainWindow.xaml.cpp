@@ -552,3 +552,58 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::ExitMenuItem_Click(
 {
 	Close();
 }
+
+winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementation::MainWindow::GenerateMazeButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    winrt::apartment_context ui_thread;
+
+    // Enusre rows and cols are odd
+	if (m_nRows % 2 == 0)
+        m_nRows--;
+	if (m_nCols % 2 == 0)
+        m_nCols--;
+
+	// Regenerate the grid with all walls
+	InitializeGrid_FromDimesions(m_nRows, m_nCols);
+
+	// Make every cell a wall 
+    for (int i = 0; i < m_nRows; i++) {
+        for (int j = 0; j < m_nCols; ++j)
+        {
+            m_grid[i][j].m_fillColor = winrt::Microsoft::UI::Colors::DarkGray();
+            m_grid[i][j].isWall = true;
+            m_grid[i][j].isStart = false;
+			m_grid[i][j].isGoal = false;
+        }
+    };
+
+	// Generate the maze using the recursive backtracking algorithm
+    Recursive_Backtracking_Maze_Generator generator(m_gridType);
+	generator.GenerateMaze(m_nRows, m_nCols, m_gridType);
+
+	// Set the path cells to be non-walls and update their colors
+    m_animationRunning = true;
+	for (Point_Int pathPoint : generator.m_mazePath)
+    {
+        auto& gridItem = m_grid[pathPoint.X][pathPoint.Y];
+        gridItem.m_fillColor = winrt::Microsoft::UI::Colors::White();
+        gridItem.isWall = false;
+		m_wallIndices.erase(std::remove(m_wallIndices.begin(), m_wallIndices.end(), pathPoint), m_wallIndices.end());
+
+		if (!m_animateMazeGeneration)
+            continue;
+
+        MainCanvas().Invalidate();
+        co_await 10ms;
+        co_await ui_thread;
+    }
+    m_animationRunning = false;
+
+    // Redraw the canvas with the loaded design
+    MainCanvas().Invalidate();
+}
+
+void winrt::SearchAlgorithmGame::implementation::MainWindow::AnimateMazeGeneration_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	m_animateMazeGeneration = !m_animateMazeGeneration;
+}

@@ -29,6 +29,9 @@ namespace winrt::SearchAlgorithmGame::implementation
                 // Get the default presenter
                 auto presenter = appWindow.Presenter().as<Microsoft::UI::Windowing::OverlappedPresenter>();
                 presenter.Maximize();
+
+				// Seed the random number generator
+                srand(static_cast<unsigned int>(time(NULL)));
             }
 
         }
@@ -74,6 +77,7 @@ namespace winrt::SearchAlgorithmGame::implementation
 		bool m_suppressTap = false;
 		bool m_animationRunning = false;
 		bool m_stopAnimation = false;
+        bool m_animateMazeGeneration = false;
 
         int m_nRows = 1;
         int m_nCols = 1;
@@ -88,6 +92,8 @@ namespace winrt::SearchAlgorithmGame::implementation
         winrt::Windows::Foundation::IAsyncAction SaveDesignMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::Windows::Foundation::IAsyncAction LoadDesignMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ExitMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::Windows::Foundation::IAsyncAction GenerateMazeButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void AnimateMazeGeneration_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

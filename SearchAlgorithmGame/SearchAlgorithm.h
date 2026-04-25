@@ -6,6 +6,7 @@
 #include <queue>
 #include <map>
 #include <unordered_set>
+#include <stack>
 #include "GridItem.h"
 
 class SearchAlgorithm
@@ -209,3 +210,34 @@ private:
 	// Map to reconstruct the path from goal to start
 	std::map<Point_Int, Point_Int> m_pathMap;
 };
+
+
+
+/*========================================= Recursive Backtracking ==========================================*/
+// Maze generation algorithm that can be used to create random mazes for testing the search algorithms.
+
+class Recursive_Backtracking_Maze_Generator 
+{
+public:
+	Recursive_Backtracking_Maze_Generator(GridType gridType = GridType::Four_Connected)
+	{
+		if (gridType == GridType::Four_Connected)
+			m_neighbors = { {-2, 0}, { 0, 2 }, { 2, 0 }, { 0, -2 } };
+		else
+			m_neighbors = { {-2, 0}, { -2, -2 }, { 0, -2 }, { 2, -2 }, { 2, 0 }, { 2, 2 }, { 0, 2 }, { -2, 2 } };
+
+		m_gridType = gridType;
+	}
+
+	// Public members
+	std::vector<Point_Int> m_mazePath;
+
+	// Public interface
+	bool GenerateMaze(int rows, int cols, GridType gridType = GridType::Four_Connected);
+
+private:
+	GridType m_gridType;
+	std::vector<std::pair<int, int>> m_neighbors;
+	std::vector<std::vector<bool>> m_visited;
+};
+

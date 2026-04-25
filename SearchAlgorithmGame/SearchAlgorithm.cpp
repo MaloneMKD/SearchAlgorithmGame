@@ -308,3 +308,51 @@ bool A_Star_Search::FindPath(const std::vector<std::vector<GridItem>>& grid, con
 		}
 	}
 }
+
+bool Recursive_Backtracking_Maze_Generator::GenerateMaze(int rows, int cols, GridType gridType)
+{
+	std::stack <Point_Int> cellStack;
+	std::vector<Point_Int> gridNeighbors;
+
+	// Initialize the visited grid to the size of the grid
+	m_visited.resize(rows, std::vector<bool>(cols, false));
+
+	int randomRow = rand() % rows;
+	int randomCol = rand() % cols;
+	Point_Int start{ randomRow, randomCol };
+	m_visited[start.X][start.Y] = true;
+	m_mazePath.push_back(start);
+	cellStack.push(start);
+
+	while (!cellStack.empty())
+	{
+		gridNeighbors.clear();
+		Point_Int current = cellStack.top();
+		for (auto n : m_neighbors)
+		{
+			int nx = current.X + n.first;
+			int ny = current.Y + n.second;
+			// Check if neighbor is within bounds and not visited
+			if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && !m_visited[nx][ny])
+				gridNeighbors.push_back({ nx, ny });
+		}
+
+		if (gridNeighbors.empty())
+		{
+			cellStack.pop();
+			continue;
+		}
+
+		// Choose a random neighbor from the available neighbors
+		Point_Int randomNeighbor = gridNeighbors[rand() % gridNeighbors.size()];
+		m_visited[randomNeighbor.X][randomNeighbor.Y] = true;
+
+		int pathX = current.X + (randomNeighbor.X - current.X) / 2;
+		int pathY = current.Y + (randomNeighbor.Y - current.Y) / 2;
+		m_mazePath.push_back({ pathX, pathY });
+		m_mazePath.push_back(randomNeighbor);
+		cellStack.push(randomNeighbor);
+	}
+
+	return true;
+}
