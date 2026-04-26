@@ -1,4 +1,4 @@
-# SearchAlgorithmGame
+# Search Algorithm Game
 
 A high-performance Pathfinding Visualizer built with **C++/WinRT** and **Win2D**. This application allows users to generate complex mazes and watch various search algorithms navigate them in real-time.
 
