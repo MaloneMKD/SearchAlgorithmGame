@@ -23,9 +23,21 @@
             <MenuBar Background="Transparent" Foreground="White" FontSize="8" Style="{StaticResource CustomMenuBarStyle}">
                 <!--File Menu-->
                 <MenuBarItem Title="File" Style="{StaticResource CustomMenuBarItemStyle}" FontSize="12">
-                    <MenuFlyoutItem x:Name="SaveDesignMenuItem" Text="Save Design" FontSize="12" Click="SaveDesignMenuItem_Click"/>
-                    <MenuFlyoutItem x:Name="LoadDesignMenuItem" Text="Load Design" FontSize="12" Click="LoadDesignMenuItem_Click"/>
-                    <MenuFlyoutItem x:Name="ExitMenuItem" Text="Exit" FontSize="12" Click="ExitMenuItem_Click"/>
+                    <MenuFlyoutItem x:Name="SaveDesignMenuItem" Text="Save Design" FontSize="12" Click="SaveDesignMenuItem_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE74E;" FontSize="10"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem x:Name="LoadDesignMenuItem" Text="Load Design" FontSize="12" Click="LoadDesignMenuItem_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE8F4;" FontSize="10"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem x:Name="ExitMenuItem" Text="Exit" FontSize="12" Click="ExitMenuItem_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE8BB;" FontSize="10"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
                 </MenuBarItem >
                 
                 <!--Configuration Menu-->
@@ -33,14 +45,27 @@
                     <MenuFlyoutSubItem Text="Grid Type" FontSize="12">
                         <RadioMenuFlyoutItem x:Name="FourConnectedMenuItem" Text="4-Connected" FontSize="12" IsChecked="True" GroupName="GridTypeGroup" Click="GridTypeItem_Click"/>
                         <RadioMenuFlyoutItem x:Name="EightConnectedMenuItem" Text="8-Connected" FontSize="12" IsChecked="False" GroupName="GridTypeGroup" Click="GridTypeItem_Click"/>
+
+                        <MenuFlyoutSubItem.Icon>
+                            <FontIcon Glyph="&#xF232;"  FontSize="10"/>
+                        </MenuFlyoutSubItem.Icon>
                     </MenuFlyoutSubItem>
 
-                    <ToggleMenuFlyoutItem x:Name="AnimateMazeGeneration" Text="Animate Maze Generation" IsChecked="False" Click="AnimateMazeGeneration_Click"/>
+                    <ToggleMenuFlyoutItem x:Name="AnimateMazeGeneration" Text="Animate Maze Generation" IsChecked="False" Click="AnimateMazeGeneration_Click" FontSize="12"/>
                 </MenuBarItem >
 
                 <!--Help Menu-->
                 <MenuBarItem Title="Help" Style="{StaticResource CustomMenuBarItemStyle}" FontSize="12">
-                    <MenuFlyoutItem x:Name="AboutMenuItem" Text="About" FontSize="12"/>
+                    <MenuFlyoutItem x:Name="AboutMenuItem" Text="About" FontSize="12" Click="AboutMenuItem_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE946;" FontSize="12"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem x:Name="UserGuide" Text="User Guide" FontSize="12" Click="UserGuide_Click">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE897;" FontSize="12"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
                 </MenuBarItem>
             </MenuBar>
         </Border>
