@@ -2,6 +2,8 @@
 
 A high-performance Pathfinding Visualizer built with **C++/WinRT** and **Win2D**. This application allows users to generate complex mazes and watch various search algorithms navigate them in real-time.
 
+<img width="1919" height="1075" alt="image" src="https://github.com/user-attachments/assets/76d521e0-d02c-4b41-806f-a819c082d8c4" />
+
 ## 🚀 FeaturesReal-Time Visualization: 
 
 Watch the algorithm explore the "frontier" and backtrack to find the shortest path.
@@ -53,6 +55,3 @@ The project utilizes a decoupled Logic vs. UI approach:
 
 ## 📜 License
 Distributed under the MIT License.
-
-### Screenshot
-<img width="1919" height="1075" alt="image" src="https://github.com/user-attachments/assets/76d521e0-d02c-4b41-806f-a819c082d8c4" />
