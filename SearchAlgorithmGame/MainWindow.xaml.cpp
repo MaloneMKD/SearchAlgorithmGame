@@ -325,6 +325,17 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::ResetCanvasButton_C
 
 winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::SearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+	// Lambda to toggle the enabled state of the buttons during the search process
+    auto toggleButtons = [&](bool value)
+    {
+        ClearPathsButton().IsEnabled(value);
+        SearchButton().IsEnabled(value);
+		ResetCanvasButton().IsEnabled(value);
+	};
+
+    // Disable buttons
+	toggleButtons(false);
+
 	// Clear any existing path visualization
 	winrt::apartment_context ui_thread;
     co_await ClearPath();
@@ -338,7 +349,10 @@ winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::S
         if (aStar.FindPath(m_grid, m_startIndex, m_goalIndex))
         {            
             co_await RunSolutionAnimation(aStar.m_explored, winrt::Microsoft::UI::Colors::Orange());
-            RunSolutionAnimation(aStar.m_solution);
+            co_await RunSolutionAnimation(aStar.m_solution);
+
+            // Enable the buttons
+            toggleButtons(true);
             co_return;
         }
 
@@ -349,7 +363,10 @@ winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::S
         Greedy_Best_First_Search gbfs(m_gridType);
         if (gbfs.FindPath(m_grid, m_startIndex, m_goalIndex))
         {
-            RunSolutionAnimation(gbfs.m_solution);
+            co_await RunSolutionAnimation(gbfs.m_solution);
+
+            // Enable the buttons
+            toggleButtons(true);
 			co_return;
         }
         DisplayMessage(L"No Solution Found", L"The Greedy-Best-First algorithm was unable to find a path from the start to the goal. This may be because the start or goal is completely surrounded by walls, or because there is no valid path due to the arrangement of walls.");
@@ -360,7 +377,10 @@ winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::S
         if (ucs.FindPath(m_grid, m_startIndex, m_goalIndex))
         {
             co_await RunSolutionAnimation(ucs.m_explored, winrt::Microsoft::UI::Colors::Orange());
-            RunSolutionAnimation(ucs.m_solution);
+            co_await RunSolutionAnimation(ucs.m_solution);
+
+            // Enable the buttons
+            toggleButtons(true);
             co_return;
         }
         DisplayMessage(L"No Solution Found", L"The Uniform-Cost algorithm was unable to find a path from the start to the goal. This may be because the start or goal is completely surrounded by walls, or because there is no valid path due to the arrangement of walls.");
@@ -370,7 +390,10 @@ winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::S
         Breadth_First_Search bfs(m_gridType);
         if(bfs.FindPath(m_grid, m_startIndex, m_goalIndex))
         {
-            RunSolutionAnimation(bfs.m_explored);
+            co_await RunSolutionAnimation(bfs.m_explored);
+
+            // Enable the buttons
+            toggleButtons(true);
             co_return;
         }
         DisplayMessage(L"No Solution Found", L"The Breadth-First algorithm was unable to find a path from the start to the goal. This may be because the start or goal is completely surrounded by walls, or because there is no valid path due to the arrangement of walls.");
@@ -380,11 +403,18 @@ winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::S
         Depth_First_Search dfs(m_gridType);
         if (dfs.FindPath(m_grid, m_startIndex, m_goalIndex))
         {
-            RunSolutionAnimation(dfs.m_explored);
+            co_await RunSolutionAnimation(dfs.m_explored);
+
+            // Enable the buttons
+            toggleButtons(true);
             co_return;
         }
         DisplayMessage(L"No Solution Found", L"The Depth-First algorithm was unable to find a path from the start to the goal. This may be because the start or goal is completely surrounded by walls, or because there is no valid path due to the arrangement of walls.");
     }
+
+    // Enable the buttons
+    toggleButtons(true);
+
     co_return;
 }
 
@@ -572,6 +602,20 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
 {
     winrt::apartment_context ui_thread;
 
+	// Check if there is not already a design on the grid and confirm with the user if they want to generate a maze and lose their current design
+    if (!m_wallIndices.empty())
+    {
+        winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+        dialog.Title(winrt::box_value(L"Confirm Maze Generation"));
+        dialog.Content(winrt::box_value(L"Generating a maze will overwrite your current grid design. Do you want to continue?"));
+        dialog.PrimaryButtonText(L"Yes");
+        dialog.CloseButtonText(L"No");
+        dialog.XamlRoot(MainGrid().XamlRoot());
+        auto result = co_await dialog.ShowAsync();
+        if (result != winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
+            co_return;
+	}
+
     // Enusre rows and cols are odd
 	if (m_nRows % 2 == 0)
         m_nRows--;
@@ -589,6 +633,7 @@ winrt::Windows::Foundation::IAsyncAction winrt::SearchAlgorithmGame::implementat
             m_grid[i][j].isWall = true;
             m_grid[i][j].isStart = false;
 			m_grid[i][j].isGoal = false;
+			m_wallIndices.push_back({ i, j });
         }
     };
 
