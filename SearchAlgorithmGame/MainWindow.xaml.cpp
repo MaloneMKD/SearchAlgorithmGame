@@ -672,10 +672,12 @@ winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::A
 {
 	AboutPage().XamlRoot(MainGrid().XamlRoot());
 	AboutPage().ShowAsync();
+    co_return;
 }
 
 winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::UserGuide_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
 	UserGuidePage().XamlRoot(MainGrid().XamlRoot());
 	UserGuidePage().ShowAsync();
+    co_return;
 }
