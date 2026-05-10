@@ -668,22 +668,14 @@ void winrt::SearchAlgorithmGame::implementation::MainWindow::AnimateMazeGenerati
 	m_animateMazeGeneration = !m_animateMazeGeneration;
 }
 
-void winrt::SearchAlgorithmGame::implementation::MainWindow::AboutMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::AboutMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-	std::wstring aboutMessage = L"Search Algorithm Game\n\nDeveloped by Malone K Napier-Jameson.\n\nThis application demonstrates various search algorithms and maze generation techniques.";
-	aboutMessage += L"\n\nAlgorithms included:\n- A*\n- Greedy-Best-First\n- Uniform-Cost\n- Breadth-First\n- Depth-First";
-	aboutMessage += L"\n\nMaze Generation:\n- Recursive Backtracking";
-	aboutMessage += L"\n\nYou can create your own grid designs, save them, and load them later. You can also visualize the search algorithms as they explore the grid and find the solution path.";
-	aboutMessage += L"\n\nFeel free to experiment with different grid configurations and algorithms to see how they perform!";
-    aboutMessage += L"\n\nThis project is open-source and available on GitHub: https://github.com/MaloneMKD/SearchAlgorithmGame.git";
-    DisplayMessage(L"About", aboutMessage.c_str());
+	AboutPage().XamlRoot(MainGrid().XamlRoot());
+	AboutPage().ShowAsync();
 }
 
-void winrt::SearchAlgorithmGame::implementation::MainWindow::UserGuide_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+winrt::fire_and_forget winrt::SearchAlgorithmGame::implementation::MainWindow::UserGuide_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    std::wstring message = L"User Guide for Search Algorithm Game\n\n1. Setting Up the Grid:\n- Use the 'Set Wall', 'Set Start', 'Set Goal', and 'Erase' options in the dropdown to configure the grid. You can also erase a wall, start or stop by right-clicking";
-    message += L"\n - Click on the grid cells to apply the selected action.\n - You can adjust the grid size using the number box and clicking 'Reset Canvas'.\n\n";
-    message += L"2.Running Search Algorithms : \n - Select a search algorithm from the dropdown(A*, Greedy - Best - First, Uniform - Cost, Breadth - First, Depth - First).\n - Click 'Search' to visualize the algorithm exploring the grid and finding a path from start to goal.\n - Use 'Clear Paths' to remove the visualization of explored paths and solutions.\n - Use 'Stop Search' to halt an ongoing search animation.\n\n";
-    message += L"3.Maze Generation : \n - Click 'Generate Maze' to create a random maze using the Recursive Backtracking algorithm.\n - Toggle 'Animate Maze Generation' to see the maze being generated step by step.\n\n4.Saving and Loading Designs : \n - Use 'Save Design' to save your current grid configuration to a JSON file.\n - Use 'Load Design' to load a previously saved grid configuration from a JSON file.";
-	DisplayMessage(L"User Guide", message.c_str());
+	UserGuidePage().XamlRoot(MainGrid().XamlRoot());
+	UserGuidePage().ShowAsync();
 }

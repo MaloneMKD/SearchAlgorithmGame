@@ -18,6 +18,10 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
+        <Grid.Resources>
+            <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground" Color="White" />
+        </Grid.Resources>
+
         <!--Menu Bar-->
         <Border Grid.Row="0" Background="#111111" Padding="10, 5">
             <MenuBar Background="Transparent" Foreground="White" FontSize="8" Style="{StaticResource CustomMenuBarStyle}">
@@ -78,12 +82,43 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-            
+
+                <Grid.Resources>
+                    <SolidColorBrush x:Key="ComboBoxForeground" Color="White"/>
+                    <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="White"/>
+                    <SolidColorBrush x:Key="ComboBoxBackground" Color="#262626"/>
+                    <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#41431B"/>
+                    <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="#41431B"/>
+
+                    <SolidColorBrush x:Key="ButtonForeground" Color="White"/>
+                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+                    <SolidColorBrush x:Key="ButtonBackground" Color="#262626"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#41431B"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#41431B"/>
+
+                    <SolidColorBrush x:Key="TextControlForeground" Color="White"/>
+                    <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="White"/>
+                    <SolidColorBrush x:Key="TextControlBackground" Color="#262626"/>
+                    <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#41431B"/>
+                    <SolidColorBrush x:Key="TextControlBackgroundPressed" Color="#41431B"/>
+
+                </Grid.Resources>
+
                 <!--Algorithm Settings-->
                 <StackPanel Spacing="20" Orientation="Horizontal">
-                    
+
                     <!--Algorithm Combo Box-->
-                    <ComboBox x:Name="AlgorithmComboBox" Header="Algorithm" FontSize="12" MinWidth="150" SelectedIndex="0">
+                    <ComboBox x:Name="AlgorithmComboBox" Header="Algorithm" FontSize="12" MinWidth="150" SelectedIndex="0"
+                              Foreground="White" Background="#262626">
+
+                        <!--Header Template-->
+                        <ComboBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="#AAAAAA" FontWeight="Bold"/>
+                            </DataTemplate>
+                        </ComboBox.HeaderTemplate>
+
+                        <!--Items-->
                         <ComboBox.Items>
                             <ComboBoxItem Content="Breadth-First" FontSize="12"/>
                             <ComboBoxItem Content="Depth-First" FontSize="12"/>
@@ -94,7 +129,16 @@
                     </ComboBox>
 
                     <!--Edit Action-->
-                    <ComboBox x:Name="EditActionComboBox" Header="Edit Action" FontSize="12" MinWidth="150" SelectedIndex="0" >
+                    <ComboBox x:Name="EditActionComboBox" Header="Edit Action" FontSize="12" MinWidth="150" SelectedIndex="0">
+
+                        <!--Header Template-->
+                        <ComboBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="#AAAAAA" FontWeight="Bold"/>
+                            </DataTemplate>
+                        </ComboBox.HeaderTemplate>
+
+                        <!--Items-->
                         <ComboBox.Items>
                             <ComboBoxItem Content="Set Wall" FontSize="12"/>
                             <ComboBoxItem Content="Set Start" FontSize="12"/>
@@ -105,13 +149,13 @@
 
                     <Button x:Name="GenerateMazeButton" Content="Generate Maze" MinWidth="100" FontSize="12" VerticalAlignment="Bottom" Click="GenerateMazeButton_Click"/>
                 </StackPanel>
-                
+
                 <!--Play/Replay Buttons-->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                     <Button x:Name="SearchButton" Content="Search" FontSize="12" MinWidth="100" Click="SearchButton_Click" VerticalAlignment="Bottom"/>
                     <Button x:Name="StopSearchButton" Content="Stop Search" FontSize="12" MinWidth="100" Click="StopSearchButton_Click" Visibility="Collapsed" VerticalAlignment="Bottom"/>
                 </StackPanel>
-                
+
                 <!--Grid Settings-->
                 <StackPanel Grid.Column="2" Spacing="20" Orientation="Horizontal" HorizontalAlignment="Right">
                     <!--Clear Paths Button-->
@@ -121,7 +165,16 @@
                     <Button x:Name="ResetCanvasButton" Content="Reset Canvas" FontSize="12" MinWidth="100" Click="ResetCanvasButton_Click" VerticalAlignment="Bottom"/>
 
                     <!--Box Size-->
-                    <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="35" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="1" LargeChange="2"/>
+                    <NumberBox x:Name="BoxSizeNumberBox" Header="Box Size" MinWidth="150" FontSize="12" Value="35" Minimum="20" SpinButtonPlacementMode="Inline" SmallChange="1" LargeChange="2"
+                               Foreground="White">
+
+                        <!--Header Template-->
+                        <NumberBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Foreground="#AAAAAA" FontWeight="Bold"/>
+                            </DataTemplate>
+                        </NumberBox.HeaderTemplate>
+                    </NumberBox>
                 </StackPanel>
             </Grid>
         </Border>
@@ -139,5 +192,248 @@
                 </StackPanel>
             </Grid>
         </Grid>
+            
+        <!--About Page-->
+        <ContentDialog x:Name="AboutPage" Title="About" PrimaryButtonText="Close" BorderThickness="0">
+            <Border Padding="20" CornerRadius="10">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+                    <TextBlock Text="Search Algorithm Game" FontSize="24" FontWeight="Bold"  HorizontalAlignment="Center"/>
+                    <TextBlock Text="Version 1.0.0" FontSize="14"  HorizontalAlignment="Center"/>
+                    <TextBlock TextWrapping="Wrap" FontSize="12"  HorizontalAlignment="Center">
+                        <TextBlock.Text>
+                            Developed by Malone K Napier-Jameson.
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap" FontSize="12" HorizontalAlignment="Center">
+                        <TextBlock.Text>
+                            GitHub: https://github.com/MaloneMKD/SearchAlgorithmGame.git
+                        </TextBlock.Text>
+                    </TextBlock>
+
+                    <Border Padding="10" CornerRadius="5">
+                        <StackPanel Orientation="Vertical" Spacing="5">
+                            <TextBlock Text="Search Algorithms:" FontSize="12" HorizontalAlignment="Left" FontWeight="Bold"/>
+                            <ListBox BorderThickness="0" SelectionMode="Single">
+                                <ListBox.Items>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12">
+                                                <TextBlock.Text>
+                                                    Breadth-First Search (BFS)
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12">
+                                                <TextBlock.Text>
+                                                    Depth-First Search (DFS)
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12">
+                                                <TextBlock.Text>
+                                                    Uniform-Cost Search (UCS)
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12">
+                                                <TextBlock.Text>
+                                                    Greedy Best-First Search
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12">
+                                                <TextBlock.Text>
+                                                    A-Star Search (A*)
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                </ListBox.Items>
+                            </ListBox>
+
+                            <TextBlock Text="Maze Generation Algorithm:" FontSize="12" HorizontalAlignment="Left" FontWeight="Bold"/>
+                            <ListBox  BorderThickness="0" SelectionMode="Single">
+                                <ListBox.Items>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12">
+                                                <TextBlock.Text>
+                                                    Recursive Backtracking
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                </ListBox.Items>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </ContentDialog>
+
+        <!--User Guide Page-->
+        <ContentDialog x:Name="UserGuidePage" Title="User Guide" PrimaryButtonText="Close" BorderThickness="0">
+            <ScrollView Padding="20" CornerRadius="10">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+                    <Border Padding="10" CornerRadius="5">
+                        <StackPanel Orientation="Vertical" Spacing="5">
+                            <TextBlock Text="Setting up the grid:" FontSize="12" HorizontalAlignment="Left" FontWeight="Bold"/>
+                            <ListBox BorderThickness="0" SelectionMode="Single">
+                                <ListBox.Items>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Use the 'Set Wall', 'Set Start', 'Set Goal', and 'Erase' options in the dropdown to configure the grid. You can also erase a wall, start or stop by right-clicking.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                    
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Click on the grid cells to apply the selected action.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                    
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    You can adjust the grid size using the number box and clicking 'Reset Canvas'.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    You can change the grid type from 4-Connected to 8-Connected through the Configuration menu.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                </ListBox.Items>
+                            </ListBox>
+
+                            
+                            <TextBlock Text="Running Search Algorithms:" FontSize="12" HorizontalAlignment="Left" FontWeight="Bold"/>
+                            <ListBox  BorderThickness="0" SelectionMode="Single">
+                                <ListBox.Items>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Select a search algorithm from the dropdown(A*, Greedy - Best - First, Uniform - Cost, Breadth - First, Depth - First).
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Click 'Search' to visualize the algorithm exploring the grid and finding a path from start to goal.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Use 'Clear Paths' to remove the visualization of explored paths and solutions.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Use 'Stop Search' to halt an ongoing search animation.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                </ListBox.Items>
+                            </ListBox>
+
+                            <TextBlock Text="Maze Generation:" FontSize="12" HorizontalAlignment="Left" FontWeight="Bold"/>
+                            <ListBox  BorderThickness="0" SelectionMode="Single">
+                                <ListBox.Items>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Click 'Generate Maze' to create a random maze using the Recursive Backtracking algorithm.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Toggle 'Animate Maze Generation' to see the maze being generated step by step.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                </ListBox.Items>
+                            </ListBox>
+
+
+                            <TextBlock Text="Saving and Loading Designs:" FontSize="12" HorizontalAlignment="Left" FontWeight="Bold"/>
+                            <ListBox  BorderThickness="0" SelectionMode="Single">
+                                <ListBox.Items>
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Use 'Save Design' to save your current grid configuration to a JSON file.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+
+                                    <ListBoxItem>
+                                        <ListBoxItem.Content>
+                                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Text>
+                                                    Use 'Load Design' to load a previously saved grid configuration from a JSON file.
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </ListBoxItem.Content>
+                                    </ListBoxItem>
+                                </ListBox.Items>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollView>
+        </ContentDialog>
     </Grid>
 </Window>
